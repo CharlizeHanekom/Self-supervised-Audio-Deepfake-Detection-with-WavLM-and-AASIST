@@ -34,7 +34,7 @@ This research project develops a **hybrid deep learning system** for detecting a
 | Multi-dataset evaluation | ASVspoof, In-The-Wild, ADD datasets |
 | Comprehensive metrics | EER, AUC-ROC, F1-score, latency |
 
-## 📂 Repository Structure
+## Repository Structure
 Self-supervised Audio Deepfake Detection with WavLM and AASIST/  
 ├── data/ # Dataset preprocessing  
 ├── models/ # WavLM, AASIST, FCNN  
