@@ -47,8 +47,8 @@ Self-supervised Audio Deepfake Detection with WavLM and AASIST/
 
 ## Installation
 ```bash
-git clone https://github.com/yourusername/audio-deepfake-detection.git
-cd audio-deepfake-detection
+git clone https://github.com/CharlizeHanekom/Self-supervised-Audio-Deepfake-Detection-with-WavLM-and-AASIST.git
+cd Self-supervised-Audio-Deepfake-Detection-with-WavLM-and-AASIST
 pip install -r requirements.txt
 ```
 
