@@ -34,18 +34,17 @@ This research project develops a **hybrid deep learning system** for detecting a
 | Multi-dataset evaluation | ASVspoof, In-The-Wild, ADD datasets |
 | Comprehensive metrics | EER, AUC-ROC, F1-score, latency |
 
-<!-- 
 ## 📂 Repository Structure
-audio-deepfake-detection/
-├── data/ # Dataset preprocessing
-├── models/ # WavLM, AASIST, FCNN
-├── training/ # Training scripts
-├── evaluation/ # Metrics and testing
-├── utils/ # Helper functions
-├── docs/ # Documentation
-├── LICENSE
-└── README.md
--->
+Self-supervised Audio Deepfake Detection with WavLM and AASIST/  
+├── data/ # Dataset preprocessing  
+├── models/ # WavLM, AASIST, FCNN  
+├── training/ # Training scripts  
+├── evaluation/ # Metrics and testing  
+├── utils/ # Helper functions  
+├── docs/ # Documentation  
+├── LICENSE  
+└── README.md  
+
 ## Installation
 ```bash
 git clone https://github.com/yourusername/audio-deepfake-detection.git
