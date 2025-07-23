@@ -3,17 +3,30 @@
 [![Project Status: Active Development](https://img.shields.io/badge/status-active_development-yellow)](https://github.com/yourusername/audio-deepfake-detection)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-## 📌 Project Status
+## Project Status
 🚧 **Under Active Development** 🚧  
 This project is currently in development (February - October 2025 timeline). Implementation and evaluation phases are ongoing.
 
-## 🔍 Overview
-A robust audio deepfake detection system combining:
-- **WavLM**: Self-supervised speech representation model
-- **AASIST**: Spectro-temporal graph attention network
-- **FCNN Classifier**: Fully connected neural network
+## Overview
+This research project develops a **hybrid deep learning system** for detecting audio deepfakes by combining:
+- **WavLM** (self-supervised speech representation model)
+- **AASIST** (spectro-temporal graph attention network)
+- **FCNN classifier** (fully connected neural network)
 
-## 🎯 Key Features
+### Key Objectives:
+1. **Improve generalization** across diverse deepfake generation methods (TTS/VC/replay attacks)
+2. **Reduce dependency** on labeled training data via self-supervised learning
+3. **Enhance robustness** against real-world audio conditions (noise, compression, etc.)
+
+### Technical Approach:
+- Leverages WavLM's ability to capture both low-level acoustic artifacts and high-level semantic patterns
+- Utilizes AASIST's attention mechanisms to analyze spectral-temporal relationships
+- Implements data augmentation techniques (noise injection, reverberation) for improved robustness
+- Evaluates on multiple benchmarks (ASVspoof, In-The-Wild, ADD datasets)
+
+*Academic project for COS700 at University of Pretoria (Feb-Oct 2025)*
+
+## Key Features
 | Feature | Benefit |
 |---------|---------|
 | Self-supervised learning | Reduces labeled data dependency |
@@ -33,14 +46,14 @@ audio-deepfake-detection/
 ├── LICENSE
 └── README.md
 -->
-## 🛠️ Installation
+## Installation
 ```bash
 git clone https://github.com/yourusername/audio-deepfake-detection.git
 cd audio-deepfake-detection
 pip install -r requirements.txt
 ```
 
-## 📅 Project Timeline
+## Project Timeline
 
 ```mermaid
 gantt
