@@ -8,6 +8,8 @@ import time
 import numpy as np
 import random
 from tqdm import tqdm
+# import torchaudio
+# from audiomentations import Compose, AddGaussianNoise, TimeStretch, PitchShift, ApplyImpulseResponse
 
 from model import WavLM_AASIST_Model
 from dataset import UnifiedAudioDataset
@@ -47,15 +49,30 @@ def main(args):
     )
 
     # --- Model, Loss, Optimizer ---
-    print("Initializing model...")
-    model = WavLM_AASIST_Model(model_path=args.model_path, freeze_wavlm=True).to(device)
-    
+    # --- 1. UNFREEZE THE MODEL ---
+    print("Initializing model for fine-tuning...")
+    model = WavLM_AASIST_Model(
+        model_path=args.model_path,
+        freeze_wavlm=False  # Set to False to allow fine-tuning
+    ).to(device)
+
     pos_weight = train_dataset.get_class_weights().to(device)
     print(f"Using positive class weight: {pos_weight.item():.2f}")
     criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
-    
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=1e-5)
-    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3, verbose=False) # Quieter scheduler
+
+    # --- 2. SET UP DIFFERENTIAL LEARNING RATES ---
+    # Separate parameters for the feature extractor (WavLM) and the backend (AASIST)
+    wavlm_params = model.feature_extractor.parameters()
+    backend_params = model.backend.parameters()
+
+    # Create two parameter groups for the optimizer
+    optimizer = torch.optim.AdamW([
+        {'params': wavlm_params, 'lr': args.learning_rate / 10},  # Lower LR for WavLM
+        {'params': backend_params, 'lr': args.learning_rate}      # Higher LR for the new backend
+    ], weight_decay=1e-5)
+
+    # It's often good to use a more advanced scheduler for fine-tuning
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=1e-6)
     scaler = torch.cuda.amp.GradScaler()
 
     # --- Training Loop ---
@@ -126,7 +143,7 @@ if __name__ == "__main__":
     parser.add_argument('--data_dir', type=str, default='./data', help='Root directory of datasets')
     parser.add_argument('--model_path', type=str, default='./models/wavlm-base', help='Path to pretrained WavLM model')
     parser.add_argument('--output_dir', type=str, default='./output', help='Directory to save model checkpoints')
-    parser.add_argument('--epochs', type=int, default=20, help='Number of training epochs')
+    parser.add_argument('--epochs', type=int, default=50, help='Number of training epochs')
     parser.add_argument('--batch_size', type=int, default=10, help='Batch size')
     parser.add_argument('--learning_rate', type=float, default=1e-4, help='Learning rate')
     parser.add_argument('--num_workers', type=int, default=8, help='Dataloader workers')

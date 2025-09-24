@@ -1,0 +1,61 @@
+## Directly After Training ##
+
+Early stopping triggered.
+
+Epoch 41/50:  80%|█████████████████████████████████████████████████████████████████████████████████████████████████▌                        | 40/50 [24:38:57<6:09:44, 2218.44s/it, TrainLoss=0.2214, ValEER=0.0991, ValLoss=0.2417] 
+
+
+
+--- Final Evaluation on Test Set ---
+
+Loaded 15552 samples for partition 'eval'.
+
+
+
+--- Test Performance ---
+
+Accuracy: 0.8926
+
+Precision: 0.9499
+
+Recall: 0.8531
+
+F1-Score: 0.8989
+
+AUC-ROC: 0.9688
+
+EER: 0.0998
+
+Loss: 0.2431
+
+Best Validation EER during training: 0.0990
+
+
+
+--- Latency Test ---
+
+Inference Latency for a single sample: 256.28 ms
+
+////////////////////////////////////////////////////////////////////////////////////
+## Run Separately ##
+
+------------------------------
+Partitions created successfully.
+Loaded 36037 samples for partition 'train'.
+Loaded 4505 samples for partition 'eval'.
+Loading pre-trained model for evaluation...
+Loading WavLM from: ./models/wavlm-base
+Freezing WavLM parameters.
+Model loaded from ./output\best_model.pth
+                                                                                                                                   
+--- Test Performance ---
+Accuracy: 0.9132
+Precision: 0.9378
+Recall: 0.9135
+F1-Score: 0.9255
+AUC-ROC: 0.9775
+EER: 0.0870
+Loss: 0.2489
+
+--- Latency Test ---
+Inference Latency for a single sample: 180.59 ms

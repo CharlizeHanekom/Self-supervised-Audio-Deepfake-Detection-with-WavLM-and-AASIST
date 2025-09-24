@@ -6,3 +6,4 @@ numpy
 scikit-learn
 tqdm
 scipy
+# audiomentations
