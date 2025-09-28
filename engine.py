@@ -1,6 +1,6 @@
 import torch
 from tqdm import tqdm
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 from torch.cuda.amp import GradScaler, autocast
 from metrics import calculate_performance_metrics
 
@@ -34,7 +34,7 @@ def train_one_epoch(model, dataloader, optimizer, criterion, device, scaler, epo
 
 
 @torch.no_grad()
-def evaluate(model, dataloader, criterion, device, eval_desc="Evaluating") -> Dict[str, Any]:
+def evaluate(model, dataloader, criterion, device, eval_desc="Evaluating") -> Tuple[Dict[str, Any], torch.Tensor, torch.Tensor]:
     """Evaluates the model on the given dataset."""
     model.eval()
     total_loss = 0.0
@@ -59,8 +59,11 @@ def evaluate(model, dataloader, criterion, device, eval_desc="Evaluating") -> Di
 
     all_labels = torch.cat(all_labels)
     all_scores = torch.cat(all_scores)
+    
+    # Generate predictions (0 or 1) based on a 0.5 threshold
+    all_preds = (all_scores > 0.5).long()
 
     metrics = calculate_performance_metrics(all_labels, all_scores)
     metrics["Loss"] = total_loss / len(dataloader)
     
-    return metrics
+    return metrics, all_labels, all_preds

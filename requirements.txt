@@ -6,4 +6,6 @@ numpy
 scikit-learn
 tqdm
 scipy
-# audiomentations
+audiomentations
+matplotlib
+seaborn

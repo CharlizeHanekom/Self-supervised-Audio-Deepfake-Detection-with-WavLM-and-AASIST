@@ -88,7 +88,7 @@ def main(args):
         epoch_pbar.set_description(f"Epoch {epoch}/{args.epochs}")
 
         train_loss = train_one_epoch(model, train_loader, optimizer, criterion, device, scaler, f"Training Epoch {epoch}")
-        val_metrics = evaluate(model, val_loader, criterion, device, f"Validating Epoch {epoch}")
+        val_metrics, _, _ = evaluate(model, val_loader, criterion, device, f"Validating Epoch {epoch}")
 
         scheduler.step(val_metrics['EER'])
         epoch_pbar.set_postfix(TrainLoss=f"{train_loss:.4f}", ValEER=f"{val_metrics['EER']:.4f}")

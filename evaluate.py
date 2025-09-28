@@ -2,10 +2,11 @@ import os
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-import numpy as np
-import random
 import time
 import warnings
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
 
 # Local imports
 from config import get_args
@@ -16,6 +17,24 @@ from engine import evaluate
 # Suppress FutureWarning
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+def plot_confusion_matrix(y_true, y_pred, save_path):
+    """
+    Generates and saves a confusion matrix plot.
+    """
+    cm = confusion_matrix(y_true, y_pred)
+    class_names = ['Spoof', 'Bonafide'] # 0 is Spoof, 1 is Bonafide
+
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                xticklabels=class_names, yticklabels=class_names)
+    plt.xlabel('Predicted Label')
+    plt.ylabel('True Label')
+    plt.title('Confusion Matrix')
+    plt.savefig(save_path)
+    print(f"Confusion matrix plot saved to {save_path}")
+    plt.close()
+
+
 def main(args):
     """
     Main function to evaluate a pre-trained model on the test set.
@@ -24,9 +43,7 @@ def main(args):
     print(f"Using device: {device} for evaluation.")
 
     # --- Data Loading for Test Set ---
-    # Note: We initialize the dataset to ensure partitions are created if they don't exist
-    # but we only need the 'eval' partition.
-    _ = UnifiedAudioDataset(data_root=args.data_dir, partition='train') # This ensures splits are made
+    _ = UnifiedAudioDataset(data_root=args.data_dir, partition='train')
     test_dataset = UnifiedAudioDataset(data_root=args.data_dir, partition='eval')
     test_loader = DataLoader(
         test_dataset, batch_size=args.batch_size, shuffle=False,
@@ -37,7 +54,7 @@ def main(args):
     print("Loading pre-trained model for evaluation...")
     model = WavLM_AASIST_Model(
         model_path=args.model_path,
-        freeze_wavlm=True  # Always freeze for evaluation
+        freeze_wavlm=True
     ).to(device)
 
     model_save_path = os.path.join(args.output_dir, args.model_checkpoint)
@@ -48,12 +65,18 @@ def main(args):
     print(f"Model loaded from {model_save_path}")
 
     # --- Evaluation ---
-    criterion = nn.BCEWithLogitsLoss() # Loss function for evaluation
-    test_metrics = evaluate(model, test_loader, criterion, device, "Testing on Eval Set")
+    criterion = nn.BCEWithLogitsLoss()
+    # The evaluate function now returns three items
+    test_metrics, true_labels, pred_labels = evaluate(model, test_loader, criterion, device, "Testing on Eval Set")
 
     print("\n--- Test Performance ---")
     for key, value in test_metrics.items():
         print(f"{key}: {value:.4f}")
+
+    # --- Generate and Save Confusion Matrix ---
+    print("\n--- Generating Confusion Matrix ---")
+    cm_save_path = os.path.join(args.output_dir, "confusion_matrix.png")
+    plot_confusion_matrix(true_labels.cpu().numpy(), pred_labels.cpu().numpy(), cm_save_path)
 
     # --- Latency Test ---
     print("\n--- Latency Test ---")

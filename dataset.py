@@ -5,33 +5,30 @@ import pandas as pd
 import numpy as np
 from torch.utils.data import Dataset
 from sklearn.model_selection import train_test_split
+from audiomentations import Compose, AddGaussianNoise, TimeStretch, PitchShift, PolarityInversion 
 
 class AudioAugmentation:
-    """Applies a set of augmentations to the audio."""
+    """Applies a set of diverse augmentations to the audio."""
     def __init__(self, sample_rate=16000):
         self.sample_rate = sample_rate
+        # p=0.5 means each augmentation has a 50% chance of being applied
+        self.augmenter = Compose([
+            AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.015, p=0.5),
+            TimeStretch(min_rate=0.8, max_rate=1.25, p=0.5),
+            PitchShift(min_semitones=-4, max_semitones=4, p=0.5),
+            # --- QUICK FIX ---
+            # Replaced AddReverb with a more basic, backward-compatible augmentation.
+            PolarityInversion(p=0.5),
+        ])
 
-    def add_noise(self, waveform, noise_level=0.005):
-        noise = torch.randn_like(waveform) * noise_level
-        return waveform + noise
-
-    def add_reverb(self, waveform):
-        try:
-            return torchaudio.sox_effects.apply_effects_tensor(
-                waveform.unsqueeze(0), self.sample_rate,
-                [["reverb", "50", "50", "100"]]
-            )[0].squeeze(0)
-        except Exception:
-            return waveform
-
-    def __call__(self, waveform):
-        if np.random.rand() < 0.5:
-            waveform = self.add_noise(waveform)
-        if np.random.rand() < 0.3:
-            waveform = self.add_reverb(waveform)
-        return waveform
-
-
+    def __call__(self, waveform: torch.Tensor):
+        # audiomentations expects a numpy array, not a tensor
+        np_waveform = waveform.numpy()
+        # The augmentation is applied
+        augmented_waveform = self.augmenter(samples=np_waveform, sample_rate=self.sample_rate)
+        # Convert back to a tensor
+        return torch.from_numpy(augmented_waveform)
+    
 class UnifiedAudioDataset(Dataset):
     """
     Dataset to load audio files, combine them, and then create
