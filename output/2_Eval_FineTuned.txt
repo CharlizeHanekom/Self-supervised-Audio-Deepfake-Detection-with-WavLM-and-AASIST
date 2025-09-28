@@ -1,0 +1,28 @@
+Epoch 11/15:  67%|████████████████████████████████████████████████████████████████████████████████████████████                                              | 10/15 [16:29:12<7:28:38, 5383.65s/it, TrainLoss=0.0093, ValEER=0.0033] 
+New best model saved to ./output\best_model.pth with EER: 0.0033                                                                                                                                                                     
+Epoch 14/15:  87%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                  | 13/15 [20:57:01<2:58:55, 5367.93s/it, TrainLoss=0.0072, ValEER=0.0034] 
+Early stopping triggered after 3 epochs with no improvement.                                                                                                                                                                         
+Epoch 14/15:  87%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                  | 13/15 [20:57:01<3:13:23, 5801.69s/it, TrainLoss=0.0072, ValEER=0.0034] 
+
+Training complete. Best validation EER: 0.0033
+------------------------------
+Proceeding to final evaluation on the test set...
+Using device: cuda for evaluation.
+Loaded 124412 samples for partition 'train'.
+Loaded 15552 samples for partition 'eval'.
+Loading pre-trained model for evaluation...
+Loading WavLM from: ./models/wavlm-base
+Freezing WavLM parameters.
+Model loaded from ./output\best_model.pth
+
+--- Test Performance ---
+Accuracy: 0.9936
+Precision: 0.9899
+Recall: 0.9987
+F1-Score: 0.9943
+AUC-ROC: 0.9997
+EER: 0.0047
+Loss: 0.0229
+
+--- Latency Test ---
+Inference Latency for a single sample: 244.99 ms
